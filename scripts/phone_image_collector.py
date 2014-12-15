@@ -11,10 +11,11 @@ class PhoneImageCollector(DataCollector):
         super(PhoneImageCollector, self).__init__()
 
         self.socket_port = rospy.get_param('~port', '50000')
+        self.socket_host = rospy.get_param('~host', socket.gethostname())
         self.server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_sock.bind((socket.gethostname(), int(self.socket_port)))
+        self.server_sock.bind((self.socket_host, int(self.socket_port)))
         self.server_sock.listen(1)
-        rospy.loginfo("Start listening for connections on %s:%s", socket.gethostname(), self.socket_port)
+        rospy.loginfo("Start listening for connections on %s:%s", self.socket_host, self.socket_port)
 
         self.client_sock, address = self.server_sock.accept()
         rospy.loginfo("Client connected from  %s", address)
@@ -36,6 +37,8 @@ class PhoneImageCollector(DataCollector):
     def _request_data(self):
       msg = 1
       total_sent = 0
+
+      rospy.loginfo("Requesting image...")
       while total_sent < 1:
           sent = self.client_sock.send(msg)
           if sent == 0:
