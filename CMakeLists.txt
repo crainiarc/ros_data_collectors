@@ -6,6 +6,7 @@ project(data_collector)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   joy
+  rosbridge_library
 )
 
 ## System dependencies are found with CMake's conventions
