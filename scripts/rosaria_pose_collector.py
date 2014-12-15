@@ -13,6 +13,7 @@ class RosAriaPoseCollector(DataCollector):
         self.data_topic = rospy.get_param('~data_topic', 'RosAria/pose')
 
         rospy.Subscriber(self.data_topic, Odometry, self.data_callback)
+        rospy.loginfo("Subscribed to %s topic", self.data_topic)
         rospy.spin()
 
 

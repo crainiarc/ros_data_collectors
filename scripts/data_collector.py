@@ -12,11 +12,13 @@ class DataCollector(object):
         self.id = 0
         self.curr_data = None
         self.data_list = []
+
         self.joystick_topic = rospy.get_param('~joystick_topic', 'joy')
         self.out_file_name = rospy.get_param('~out_file', 'file.json')
         self.trigger_button = int(rospy.get_param('~trigger_button', '1'))
 
         rospy.Subscriber('joy', Joy, self._joystick_triggered)
+        rospy.loginfo("Subscribed to %s topic", self.joystick_topic)
 
 
     def data_callback(self, data):
@@ -25,9 +27,11 @@ class DataCollector(object):
 
     def _joystick_triggered(self, joystick):
         if joystick.buttons[self.trigger_button] == 1:
+            rospy.loginfo("Data collection triggered. Writing data to file...")
             self.id += 1
             self.data_list += [{'id': self.id, 'data': extract_values(data)}]
             self._write_to_file()
+            rospy.loginfo("Done writing data to file")
 
 
     def _write_to_file(self):
