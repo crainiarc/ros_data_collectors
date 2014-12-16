@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
+import json
 import rospy
 
 from sensor_msgs.msg import Joy
@@ -36,4 +37,4 @@ class DataCollector(object):
 
     def _write_to_file(self):
         with open(self.out_file_name, 'w') as f:
-            json.dumps(self.data_list, f)
+            json.dump(self.data_list, f)
