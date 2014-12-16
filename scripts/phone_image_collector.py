@@ -21,33 +21,54 @@ class PhoneImageCollector(DataCollector):
         rospy.loginfo("Client connected from  %s", address)
 
         rospy.spin()
+        self.client_sock.close()
+        self.server_sock.close()
 
 
     def _joystick_triggered(self, joystick):
-        if joystick.buttons[self.trigger_button] == 1:
-            self.id += 1
+        rospy.loginfo('joystick triggerred')
+        self._request_data()
+        data_buffer = self._receive_data()
+        print(data_buffer)
+        # if joystick.buttons[self.trigger_button] == 1:
+        #     self.id += 1
 
-            self._request_data()
-            data_buffer = self._receive_data()
+        #     self._request_data()
+        #     data_buffer = self._receive_data()
 
-            self.data_list += [{'id': self.id, 'data': extract_values(data)}]
-            self._write_to_file()
+        #     self.data_list += [{'id': self.id, 'data': extract_values(data)}]
+        #     self._write_to_file()
 
 
     def _request_data(self):
-      msg = 1
+      msg = '1\n'
       total_sent = 0
 
       rospy.loginfo("Requesting image...")
       while total_sent < 1:
           sent = self.client_sock.send(msg)
           if sent == 0:
-              raise RuntimeError("socket connection broken")
+              raise RuntimeError("Socket connection broken")
           total_sent = total_sent + sent
 
 
     def _receive_data(self):
-      pass
+        chunk = None
+        chunks = []
+        bytes_recd = 0
+
+        rospy.loginfo("Receiving data")
+        while chunk != 0:
+            chunk = self.client_sock.recv(1)
+            if chunk == '':
+                raise RuntimeError("Socket connection broken")
+            elif chunk == 0:
+                break
+            chunks.append(chunk)
+            bytes_recd = bytes_recd + len(chunk)
+            print(''.join(chunks))
+        rospy.loginfo("Successfully received data")
+        return ''.join(chunks)
 
 
 if __name__ == "__main__":

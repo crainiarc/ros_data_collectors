@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import rospy
 
+from std_msgs.msg import String
 from sensor_msgs.msg import Joy
 from rosbridge_library.internal.message_conversion import extract_values
 
@@ -17,7 +18,8 @@ class DataCollector(object):
         self.out_file_name = rospy.get_param('~out_file', 'file.json')
         self.trigger_button = int(rospy.get_param('~trigger_button', '1'))
 
-        rospy.Subscriber('joy', Joy, self._joystick_triggered)
+        rospy.Subscriber('joy', String, self._joystick_triggered)
+        # rospy.Subscriber('joy', Joy, self._joystick_triggered)
         rospy.loginfo("Subscribed to %s topic", self.joystick_topic)
 
 
