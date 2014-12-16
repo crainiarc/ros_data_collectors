@@ -10,6 +10,7 @@ class PhoneImageCollector(DataCollector):
     def __init__(self):
         super(PhoneImageCollector, self).__init__()
 
+        self.image_file_path = rospy.get_param('~image_file_path', '~')
         self.socket_port = rospy.get_param('~port', '50000')
         self.socket_host = rospy.get_param('~host', socket.gethostname())
         self.server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -26,18 +27,16 @@ class PhoneImageCollector(DataCollector):
 
 
     def _joystick_triggered(self, joystick):
-        rospy.loginfo('joystick triggerred')
-        self._request_data()
-        data_buffer = self._receive_data()
-        print(data_buffer)
-        # if joystick.buttons[self.trigger_button] == 1:
-        #     self.id += 1
+        if joystick.buttons[self.trigger_button] == 1:
+            self.id += 1
+            self._request_data()
+            data, image = self._receive_data()
 
-        #     self._request_data()
-        #     data_buffer = self._receive_data()
+            self.data_list += [{'id': self.id, 'data': data}]
+            self._write_to_file()
 
-        #     self.data_list += [{'id': self.id, 'data': extract_values(data)}]
-        #     self._write_to_file()
+            with open(self.image_file_path + '/image_' + str(self.id) + '.jpg', 'wb') as f:
+                f.write(image)
 
 
     def _request_data(self):
@@ -53,22 +52,53 @@ class PhoneImageCollector(DataCollector):
 
 
     def _receive_data(self):
+        rospy.loginfo("Receiving data")
+
+        # Read data other than images
+        total_bytes, bytes_recd = self._read_int()
+        sensor_data, bytes_recd = self._read_bytes(total_bytes)
+        self._read_bytes(1)
+
+        # Read image data
+        total_bytes, bytes_recd = self._read_int()
+        image_data, bytes_recd = self._read_bytes(total_bytes)
+
+        rospy.loginfo("Successfully received data")
+        return sensor_data, image_data
+
+
+    def _read_int(self):
         chunk = None
         chunks = []
         bytes_recd = 0
 
-        rospy.loginfo("Receiving data")
         while chunk != 0:
             chunk = self.client_sock.recv(1)
+            if chunk == '':
+                raise RuntimeError("Socket connection broken")
+            elif chunk == 0 or chunk < '0' or chunk > '9':
+                break
+            chunks.append(chunk)
+            bytes_recd += len(chunk)
+
+        return int(b''.join(chunks)), bytes_recd
+
+
+    def _read_bytes(self, num_bytes):
+        chunk = None
+        chunks = []
+        bytes_recd = 0
+
+        while bytes_recd < num_bytes:
+            chunk = self.client_sock.recv(min(num_bytes, 2048))
             if chunk == '':
                 raise RuntimeError("Socket connection broken")
             elif chunk == 0:
                 break
             chunks.append(chunk)
-            bytes_recd = bytes_recd + len(chunk)
-            print(''.join(chunks))
-        rospy.loginfo("Successfully received data")
-        return ''.join(chunks)
+            bytes_recd += len(chunk)
+
+        return b''.join(chunks), bytes_recd
 
 
 if __name__ == "__main__":
