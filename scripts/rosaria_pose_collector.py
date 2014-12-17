@@ -4,7 +4,6 @@ from __future__ import print_function
 import rospy
 from nav_msgs.msg import Odometry
 from data_collector import DataCollector
-import rosbridge_library
 
 class RosAriaPoseCollector(DataCollector):
 
