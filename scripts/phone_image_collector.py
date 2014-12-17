@@ -102,5 +102,5 @@ class PhoneImageCollector(DataCollector):
 
 
 if __name__ == "__main__":
-    rospy.init_node('rosaria_pose_collector', anonymous=True)
+    rospy.init_node('phone_image_collector', anonymous=True)
     node = PhoneImageCollector()
