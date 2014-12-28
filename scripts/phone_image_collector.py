@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
+import json
 import rospy
 import socket
 from data_collector import DataCollector
@@ -36,7 +37,7 @@ class PhoneImageCollector(DataCollector):
             self._write_to_file()
 
             with open(self.image_file_path + '/image_' + str(self.id) + '.jpg', 'wb') as f:
-                f.write(image)
+                f.write(image.decode('base64'))
 
 
     def _request_data(self):
@@ -57,11 +58,10 @@ class PhoneImageCollector(DataCollector):
         # Read data other than images
         total_bytes, bytes_recd = self._read_int()
         sensor_data, bytes_recd = self._read_bytes(total_bytes)
-        self._read_bytes(1)
 
-        # Read image data
-        total_bytes, bytes_recd = self._read_int()
-        image_data, bytes_recd = self._read_bytes(total_bytes)
+        sensor_data = json.loads(sensor_data)
+        image_data = sensor_data["Image Data"]
+        del sensor_data["Image Data"]
 
         rospy.loginfo("Successfully received data")
         return sensor_data, image_data
