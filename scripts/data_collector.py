@@ -14,6 +14,7 @@ class DataCollector(object):
         self.curr_data = None
         self.data_list = []
 
+        self.id = int(rospy.get_param('~starting_id', '0'))
         self.joystick_topic = rospy.get_param('~joystick_topic', 'joy')
         self.out_file_name = rospy.get_param('~out_file', 'file.json')
         self.trigger_button = int(rospy.get_param('~trigger_button', '0'))
