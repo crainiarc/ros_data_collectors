@@ -3,7 +3,6 @@ from __future__ import print_function
 
 import rospy
 from sensor_msgs.msg import LaserScan
-from nav_msgs.msg import Odometry
 from data_collector import DataCollector
 
 class SickLaserScanCollector(DataCollector):
