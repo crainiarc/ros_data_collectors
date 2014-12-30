@@ -11,8 +11,11 @@ trigger_button = None
 
 def callback(data):
     pub = rospy.Publisher('joy', Joy)
+    buttons = [0] * (trigger_button + 1)
+    buttons[trigger_button] = 1
+
     joy_msg = Joy()
-    joy_msg.buttons[trigger_button] = 1
+    joy_msg.buttons = buttons
     pub.publish(joy_msg)
 
 
