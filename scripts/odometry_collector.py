@@ -8,7 +8,7 @@ from data_collector import DataCollector
 class OdometryCollector(DataCollector):
 
     def __init__(self):
-        super(RosAriaPoseCollector, self).__init__()
+        super(OdometryCollector, self).__init__()
         self.data_topic = rospy.get_param('~data_topic', 'odom')
 
         rospy.Subscriber(self.data_topic, Odometry, self.data_callback)
@@ -18,4 +18,4 @@ class OdometryCollector(DataCollector):
 
 if __name__ == "__main__":
     rospy.init_node('odometry_collector', anonymous=True)
-    node = RosAriaPoseCollector()
+    node = OdometryCollector()
