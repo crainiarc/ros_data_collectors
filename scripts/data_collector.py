@@ -32,8 +32,8 @@ class DataCollector(object):
             rospy.loginfo("Data collection triggered. Writing data to file...")
             self.id += 1
             self.data_list += [{'id': self.id, 'data': extract_values(self.curr_data)}]
-            self._write_to_file()
-            rospy.loginfo("Done writing data to file")
+            # self._write_to_file()
+            # rospy.loginfo("Done writing data to file")
 
 
     def _write_to_file(self):

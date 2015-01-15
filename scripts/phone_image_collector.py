@@ -23,6 +23,7 @@ class PhoneImageCollector(DataCollector):
         rospy.loginfo("Client connected from  %s", address)
 
         rospy.spin()
+        self._write_to_file()
         self.client_sock.close()
         self.server_sock.close()
 

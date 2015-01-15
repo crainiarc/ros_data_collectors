@@ -18,6 +18,7 @@ class GenericCollector(DataCollector):
 
         rospy.loginfo("Subscribed to %s topic", self.data_topic)
         rospy.spin()
+        self._write_to_file()
 
 
 if __name__ == "__main__":

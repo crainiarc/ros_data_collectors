@@ -14,6 +14,7 @@ class SickLaserScanCollector(DataCollector):
         rospy.Subscriber(self.data_topic, LaserScan, self.data_callback)
         rospy.loginfo("Subscribed to %s topic", self.data_topic)
         rospy.spin()
+        self._write_to_file()
 
 
 if __name__ == "__main__":
