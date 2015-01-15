@@ -19,7 +19,7 @@ class DataCollector(object):
         self.out_file_name = rospy.get_param('~out_file', 'file.json')
         self.trigger_button = int(rospy.get_param('~trigger_button', '0'))
 
-        rospy.Subscriber(self_joystick_topic, Joy, self._joystick_triggered)
+        rospy.Subscriber(self.joystick_topic, Joy, self._joystick_triggered)
         rospy.loginfo("Subscribed to %s topic", self.joystick_topic)
 
 
